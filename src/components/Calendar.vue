@@ -103,6 +103,9 @@
 </template>
 
 <script>
+import { db } from '@/main';
+
+
 export default {
 	data: () => ({
 		today: new Date().toISOString().substr(0, 10),
@@ -125,9 +128,27 @@ export default {
 		selectedOpen: false,
 		events: [],
 		dialog: false	
-	})
+	}),
+		mounted(){
+			this.getEvents();
+	},
+	methods: {
+		async getEvents() {
+			let snapshot = await db.collection('calEvent').get();
+			let events = [];
+			snapshot.forEach(doc => {
+				//console.log(doc.data());
+				let appData = doc.data();
+				appData.id = doc.id;
+				events.push(appData);
+			});
+			this.events = events;
+			
+		}
+	}
 }
 </script>
+
 
 <style>
 
